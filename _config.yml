@@ -1,7 +1,7 @@
 markdown: rdiscount
 permalink: /:year/:month/:day/:title/
-url: http://webfrogs.github.com
-author: webfrogs
+url: http://mad4alcohol.github.com
+author: 陈傻鸡
 pygments: true
 safe: true
 paginate: 16
