@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "不规范的简述一下JPEG原理"
+title: "不规范地简述一下JPEG原理"
 description: ""
 category: misc
 tags: [jpeg]
 ---
 
-最近在做信安大赛，按指导老师要求，去看了JPEG相关的东西。这里稍微记录一下。
+最近在做水得一比的信安大赛，按指导老师要求，去看了JPEG相关的东西。这里稍微记录一下。
 
 如果对JPEG的背景什么的感兴趣可以去看看 [JPEG的wiki页面](http://en.wikipedia.org/wiki/JPEG ) 。
 
