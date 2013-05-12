@@ -45,4 +45,5 @@ comments: false
 
 部分修改来自[这个repo](https://github.com/plusjade/jekyll-bootstrap )，也一并表示感谢。
 
+本博客源码[在此](https://github.com/mad4alcohol/mad4a-blog )，可以随意fork。
 
