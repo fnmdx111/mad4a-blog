@@ -6,7 +6,7 @@ category: gui
 tags: [pyqt, python, summary]
 ---
 
-[QTextBrowser]: http://qt-project.org/doc/qt-4.8/qtextedit.html#append 
+[QTextBrowser]: http://qt-project.org/doc/qt-4.8/qtextedit.html
 [model view framework]: http://qt-project.org/doc/qt-4.8/model-view-programming.html 
 
 概述
