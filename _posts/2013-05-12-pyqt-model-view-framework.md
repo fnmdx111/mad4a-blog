@@ -29,7 +29,7 @@ Qt提供了[QAbstractItemModel][]给我们作为实现自定义的model的基础
 
 [os-exp]: https://github.com/mad4alcohol/os-experiments
 
-例子来自于（操蛋的）[操作系统实习][ox-exp]，最终实现效果如图 ![overview.png](/assets/images/pyqt-model-view-framework/overview.png)
+例子来自于（操蛋的）[操作系统实习][os-exp]，最终实现效果如图 ![overview.png](/assets/images/pyqt-model-view-framework/overview.png)
 
 说下每个地方是干什么的。用户首先输入进程名和大小，点添加之后会在上面的列表控件里面添加一项，用来显示进程相关的信息。同时会为这个进程创造一个页表对象（见源码的PageTable类），由于一个进程对应一个页表，也就是说会有多个页表对象，那么在选中上面的列表中的项目的时候，下面的页表列表控件也要切换到相应的PageTable对象上去。用户可以选择任意的页面然后点击释放按钮来释放页面。对应地，内存空间在变化的时候，位示图（图中右边的那个Table控件）也要变化。
 
@@ -49,7 +49,6 @@ Qt提供了[QAbstractItemModel][]给我们作为实现自定义的model的基础
 
 * 列表控件的变化利用model的[`beginInsertRows()`][]，[`endInsertRows()`][]等来实现
 * 数据的修改可以直接在自定义的model中内置的数据存储中修改
-* 选中的列表项用[`selectedIndexes()`][]来获取
 
 自定义一个Model
 ---
@@ -174,7 +173,7 @@ def headerData(self, section, orientation, role=Qt.DisplayRole):
 
 接下来调用[`setModel()`][]来设置view使用的model对象。虽然是[QTreeView][]，但是它仍然支持[QAbstractTableModel][]。你也可以把这个model应用到[QTableView][]上，看看展示效果上的区别。
 
-如何使用View和自定义的Model
+如何交互（只读，可编辑的要涉及到delegate）
 ---
 
 然后说说交互方面，比如进程项目的添加、页表的转换之类的。
@@ -195,8 +194,7 @@ self.endInsertRows()
 [QItemSelectionModel]: http://qt-project.org/doc/qt-4.8/qitemselectionmodel.html
 [`currentRowChanged()`]: http://qt-project.org/doc/qt-4.8/qitemselectionmodel.html#currentRowChanged
 
-为了显示每个进程的对应列表，必须知道在进程列表中，当前选中的是哪一项。在[QAbstractItemView][]里有一个方法[`selectionModel()`][]可以拿到这个view的[QItemSelectionModel][]，它管理这个view关于*选择*的一切信息。可以同过它拿到被选中的行、列，或者判断是否有行或列被选中（具体方法参见[文档][QItemSelectionModel]。这里我们要用的是它的[`currentRowChanged()`
-][]信号。
+为了显示每个进程的对应列表，必须知道在进程列表中，当前选中的是哪一项。在[QAbstractItemView][]里有一个方法[`selectionModel()`][]可以拿到这个view的[QItemSelectionModel][]，它管理这个view关于*选择*的一切信息。可以同过它拿到被选中的行、列，或者判断是否有行或列被选中（具体方法参见[文档][QItemSelectionModel]。这里我们要用的是它的[`currentRowChanged()`][]信号。
 {% highlight python linenos %}
 self.connect(self.proc_list_view.selectionModel(),
              SIGNAL('currentRowChanged(QModelIndex, QModelIndex)'),
@@ -211,6 +209,25 @@ def switch_page_table_model(self, index, _=None):
     self.page_table_view.setModel(self.page_table_models[proc_name])
 {% endhighlight %}
 我维护了一个[defaultdict][]，进程名做键，PageTableModel作为值，这个函数首先通过index拿到这个index对应的进程名`proc_name`，然后用[`setModel()`][]方法切换`self.page_table_view`使用的model。实现起来还是比较简单的。
+
+[selectionMode]: http://qt-project.org/doc/qt-4.8/qabstractitemview.html#selectionMode-prop
+[selectionMode-enum]: http://qt-project.org/doc/qt-4.8/qabstractitemview.html#SelectionMode-enum
+[`setSelectionModel()`]: http://qt-project.org/doc/qt-4.8/qabstractitemview.html#setSelectionModel
+
+如果要改变一个view的选择模式，可以调用[`setSelectionMode()`][selectionMode]，这里我使用的是默认的，而页表控件可以使用[ExtendedSelection模式][selectionMode-enum]来开启多选功能。如果要获得选中项，仍然可以通过[QItemSelectionModel][]来获得，也可以使用[`selectedIndexes()`][]来获取（我猜测这个方法只是对[QItemSelectionModel][]的一些方法做了一个convenience包装）。Qt为啥要还要单独提供一个model来表示选中项呢？我的理解是，这也是为了灵活性做的一个解耦，有了这个类，我们就可以利用[`setSelectionModel()`][]同步两个或者多个view的selection了。要注意的是这些view使用的model最好相同，model不同的话，同步selection好像也没什么意义。
+
+示例代码
+{% highlight python linenos %}
+model = YourModel()
+view1 = QTableView()
+view1.setModel(model)
+view2 = QListView()
+view2.setModel(model)
+# 注意：只有在setModel之后才能设置selectionModel
+# 因为只有在设置了model之后view才会生成自己的selectionModel
+# 如果在setModel之前设置，python会崩溃
+view2.setSelectionModel(view1.selectionModel())
+{% endhighlight %}
 
 关于delegate
 ---
