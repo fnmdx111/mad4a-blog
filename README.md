@@ -11,5 +11,6 @@ fork自[webfrog的博客](https://github.com/webfrogs/webfrogs.github.com )
 * google analytics的id，多说的id
 * 添加了一个回到最上的按钮
 * 这个README.md
+* 给h2添加了一个border-bottom
 
 

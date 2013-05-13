@@ -8,14 +8,16 @@ tags: [emacs, summary, configure]
 
 今天一起床，突然心血来潮，想配个emacs来玩玩。一来增加点见识，一个*编辑器*到底能做到什么水平；二来，如果真配好了，以后用起来也应该会很方便；再来，我本来就对lisp类的语言很感兴趣（其实只要不是命令式的都感兴趣，嘛，满大街都是imperative的，这不科学），而且最开始是想作为clojure的ide来弄的，配配emacs也算是增进对lisp的了解吧。
 
-### 准备工作 ###
+准备工作
+---
 
 + 过一遍emacs自带的tutorial，了解一下基本操作，后面的配置也就可以作为实际的练习了。另：有中文的，所以应该不是什么大问题，无奈的是emacs在windows下默认的字体渲染得很丑（ps: 这是可以解决的，详见后文）。
 + 了解lisp的基本知识，比如这种_奇怪_的语法（[S-expression](http://en.wikipedia.org/wiki/S-expression)）是怎么回事，最开始可能不习惯，但是习惯之后，你就会明白这种语法的表达力有多强大（通过宏来体现出数据即代码，代码即数据）。
 
 接下来，开始*一块一块*地来看`.emacs`（即vim里的`.vimrc`）。
 
-### 哦，对了，首先要说的是.emacs放哪。 ###
+哦，对了，首先要说的是.emacs放哪
+---
 
 *nix就不说了，大家都知道。但是windows的情况就要复杂点了。
 我先是稍微在网上搜了一下，说在`C:/Users/xxx/AppData/Roaming/.emacs.d`里建一个`init.el`。我试了，不行。（怎么试？就加一句`(tool-bar-mode -1)`，然后重启emacs看看有变化没。）百撕不得骑姐（大误）之后，还是打算换个关键字，用英语搜吧。果然搜到了一个关于windows的[faq](http://www.gnu.org/software/emacs/windows/Installing-Emacs.html#index-HOME-directory-49)，里面的3.5节对确定主文件夹的机制讲得很清楚：
@@ -30,7 +32,8 @@ tags: [emacs, summary, configure]
 
 我是直接用的第一个方法弄的，果然好使（还是官方文档靠谱啊）。
 
-### 外观部分 ###
+外观部分
+---
 
 首先得设置好语言环境（应该就是总编码的意思），
 用以下代码设置

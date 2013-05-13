@@ -34,7 +34,8 @@ YASnippet的配置是非常简单的，只需要在`.emacs`中加入
 再说下YASnippet的自定义模板吧，这么方便的工具不会自定义真是太浪费了。
 我们从实例来说明。
 
-### 第一个例子：post的meta信息模板 ###
+第一个例子：post的meta信息模板
+---
 
 大家知道，jekyll的post是由markdown编译而来的，而这些markdown文件（即post源文件）必须有一些可以为jekyll所用的meta信息（比如title，category之类的）才能被识别为一篇博客。本着[DRY原则](http://en.wikipedia.org/wiki/Don't_repeat_yourself)（是的，代码里的原则不光码代码的时候很受用，从字面上看，干别的事也是），现将这些meta信息做成一个snippet。
 
@@ -90,7 +91,8 @@ YASnippet的配置是非常简单的，只需要在`.emacs`中加入
 
 然后就可以按tab，依次输入信息了。
 
-### 第二个例子：高亮代码tag模板 ###
+第二个例子：高亮代码tag模板
+---
 
 用jekyll写博客时，插入代码片段要用到liquid的tag（准确地说是jekyll给liquid写的扩展tag）如下
 
@@ -116,7 +118,8 @@ YASnippet的配置是非常简单的，只需要在`.emacs`中加入
 
 保存并重启之后，在markdown-mode下就可以把`hl`展开为上面那一段了，基本消灭了重复操作。
 
-### 最后一个例子，也是最复杂的一个，但是也是最好玩的一个 ###
+最后一个例子，也是最复杂的一个，但是也是最好玩的一个
+---
 
 markdown中的img标签语法为
 
@@ -252,7 +255,8 @@ _注意_：里面是一行，不能折行。
 
 这样就基本介绍了YASnippet的配置和自定义snippet（中间还穿插了一点elisp）。
 
-### 后记 ###
+后记
+---
 
 要知道YASnippet这个插件自身就是elisp写的，emacs的超高可配置性可见一斑，无怪乎说 [**emacs就是一个操作系统**](http://c2.com/cgi/wiki?EmacsAsOperatingSystem)了。
 
