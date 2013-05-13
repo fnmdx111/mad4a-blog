@@ -12,7 +12,7 @@ tags: [pyqt, python, summary]
 概述
 ---
 
-ui设计中，经常会有展示一系列数据的情况，如果是log那种流动的文字信息，可以用[QTextBrowser][]来展示（之后会写点东西来具体说明一下）。如果是列表式的（树形，表形之类的），可以考虑用Qt的[Model/View Framework][model view framework]。这篇文章会介绍如何自定义model和如何使用model。一般来说，会这些就足够实现一些简单的功能了。Qt的delegate可能以后会添一篇文章，毕竟现在我也没怎么用过delegate。
+ui设计中，经常会有展示一系列数据的情况，如果是log那种流动的文字信息，可以用[QTextBrowser][]来展示（[参见这篇文章](../../13/log-handler-with-qtextbrowser/ )）。如果是列表式的（树形，表形之类的），可以考虑用Qt的[Model/View Framework][model view framework]。这篇文章会介绍如何自定义model和如何使用model。一般来说，会这些就足够实现一些简单的功能了。Qt的delegate可能以后会添一篇文章，毕竟现在我也没怎么用过delegate。
 
 这个框架利用了经典的MVC设计模式，model用来提供数据，view用来展示数据，control用来控制view对用户输入的反应。而在Qt里，view和controller被合并成了view，也就是说Qt里的view有了（初步的）反应用户输入的功能，而为了提供灵活的处理方式，Qt引入了delegate。delegate可以自定义数据显示（render）和修改的方式。
 
