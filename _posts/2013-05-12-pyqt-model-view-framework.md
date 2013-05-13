@@ -172,7 +172,7 @@ def headerData(self, section, orientation, role=Qt.DisplayRole):
 
 生的[QTreeView][]看起来是这样的 ![raw-treeview.png](/assets/images/pyqt-model-view-framework/raw-treeview.png)为了让它变熟，得先用[`setRootIsDecorated()`][]去掉左边的树形图用的线，然后用[`setItemsExpandable()`][]让项目不能展开。变成这样 ![usable-treeview.png](/assets/images/pyqt-model-view-framework/usable-treeview.png)
 
-接下来调用[`setModel()`][]来设置view使用的model对象。虽然是[QTreeView][]，但是它仍然支持[QAbstractTableModel][]。
+接下来调用[`setModel()`][]来设置view使用的model对象。虽然是[QTreeView][]，但是它仍然支持[QAbstractTableModel][]。你也可以把这个model应用到[QTableView][]上，看看展示效果上的区别。
 
 如何使用View和自定义的Model
 ---
