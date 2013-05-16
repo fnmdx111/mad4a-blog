@@ -13,6 +13,9 @@ layout: page
   <li class="listing-item">
     <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    <a href="{{ post.url }}">
+        <span style="font-size: 11px" class="ds-thread-count label" data-thread-key="{{ post.id }}"></span>
+    </a>
   </li>
 {% endfor %}
 </ul>
@@ -50,4 +53,6 @@ layout: page
   {% endif %}
   (共{{ paginator.total_posts }}篇)
 </div>
+
+{% include comments_script.md %}
 

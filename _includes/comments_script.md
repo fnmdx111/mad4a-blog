@@ -1,6 +1,3 @@
-<!-- Duoshuo Comment BEGIN -->
-	<div class="ds-thread" data-thread-key="{{ page.id }}"
-         data-title="{{ page.title }}"></div>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"m4ablog"};
 	(function() {
@@ -12,5 +9,3 @@ var duoshuoQuery = {short_name:"m4ablog"};
 		|| document.getElementsByTagName('body')[0]).appendChild(ds);
 	})();
 	</script>
-<!-- Duoshuo Comment END -->
-
