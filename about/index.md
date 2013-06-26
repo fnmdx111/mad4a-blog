@@ -52,3 +52,7 @@ comments: false
 
 在[源码](https://github.com/mad4alcohol/mad4a-blog )中附加了一个简单的脚本`auto.sh`，自动push博客源码和生成的站点代码，感兴趣的可以自己修改尝试下。
 
+### TODO
+
+做一个插件，自动生成post的大纲，浮在post页面左边。
+
