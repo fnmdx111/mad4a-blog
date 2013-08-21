@@ -14,5 +14,6 @@ fork自[webfrog的博客](https://github.com/webfrogs/webfrogs.github.com )
 * 给h2添加了一个border-bottom
 * 修改了pre code的字体大小和pre, code的默认字体
 * 修改了highlight的配色为monokai
+* 为每个post添加了outline，实现方式为js
 
 
