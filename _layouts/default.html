@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/media/css/style.css">
     <link rel="stylesheet" href="/media/css/highlight.css">
     <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/outliner.js"></script>
   </head>
   <script type="text/javascript">
     function setTimeSpan(){
@@ -42,7 +43,7 @@
         <header>
         <h1>{{ page.title }}</h1>
         </header>
-        <nav>
+        <nav id="real_nav">
         <span><a title="home page" class="" href="/">Home</a></span>
         <span><a title="about" class="" href="/about/">About</a></span>
         <span><a title="categories" class="" href="/categories/">Categories</a></span>
@@ -52,7 +53,7 @@
         <article class="content">
         {{ content }}
         </article>
-        <a style="display:scroll;position:fixed;bottom:5px;right:5px;" href="#" title="Back to Top">
+        <a style="position:fixed;bottom:5px;right:5px;" href="#" title="Back to Top">
             <img src="/assets/images/btt.png" />
         </a> 
       </div>
