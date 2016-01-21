@@ -1,4 +1,4 @@
-jekyll build
+~/.rbenv/versions/2.2.3/bin/jekyll build
 
 git add .
 git commit -m 'update'
