@@ -4,33 +4,19 @@ layout: page
 comments: false
 ---
 
-傻鸡一只，只不过稍微会码点东西。患有严重的拖延症和即时健忘症。
-好各种语言，好viking metal，好b站（特别是三次元鬼畜什么的），好装逼，好60%黑轴，好vim（emacs也能用），不喜中文流行歌。
+好各种语言，好folk metal，好三次元鬼畜，好装逼，好黑轴，好emacs。
 
-不幸被我折腾过的东西有（排名不分先后）
+不好C++。
 
-* python（被我折腾的最惨）
-* pyqt
-* flask和它的朋友们
-* sqlite
-* xelatex
-* archlinux, gentoo
-* clojure
-* java (android), scala
-* haskell
-* emacs，elisp
-* github
-* vim, pycharm
-* 还有些不记得了
+哦对了，IIDX挺好玩的。
 
-
-在此表示歉意。
+最近在折腾Haskell。
 
 ----
 
 ### 联系方式
 
-* github: [https://github.com/mad4alcohol](https://github.com/mad4alcohol )
+* github: [https://github.com/qwert42](https://github.com/qwert42 )
 
 * 新浪微博: [http://weibo.com/mad4alcohol](http://weibo.com/mad4alcohol )
 
@@ -54,5 +40,5 @@ comments: false
 
 ### TODO
 
-做一个插件，自动生成post的大纲，浮在post页面左边。
+找到暑期实习（
 

@@ -4,9 +4,9 @@ git add .
 git commit -m 'update'
 git push -u origin master &
 
-cp _site/* ../mad4alcohol.github.com/ -r
+cp _site/* ../qwert42.github.io/ -r
 
-cd ../mad4alcohol.github.com
+cd ../qwert42.github.io
 git add .
 git commit -m 'update'
 git push -u origin master &
