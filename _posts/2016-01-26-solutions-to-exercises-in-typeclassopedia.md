@@ -190,7 +190,7 @@ instance Applicative MyMaybe where
   = pure (u' $ y)
   = pure ((\x -> x $ y) u')
   = pure (($ y) u')
-  = pure ($ y) <*> pure u' -- 由同态律得
+  = pure ($ y) <*> pure u'  -- 由同态律得
   = pure ($ y) <*> u
 
 -- 若 u = MyNothing
@@ -209,14 +209,14 @@ instance Applicative MyMaybe where
 
 ```haskell
     u <*> (v <*> w)
-  = u <*> (Maybe v' <*> Maybe w') -- 由(<*>)的定义得
+  = u <*> (Maybe v' <*> Maybe w')  -- 由(<*>)的定义得
   = u <*> Maybe (v' w')
   = Maybe u' <*> Maybe (v' w')
   = Maybe (u' (v' w'))
-  = Maybe ((u' . v') w') -- 由(.)的定义得
+  = Maybe ((u' . v') w')  -- 由(.)的定义得
   = Maybe ((.) u' v' w')
-  = Maybe ((.) u' v') <*> Maybe w' -- 由同态律得
-  = Maybe ((.) u') <*> Maybe v' <*> w -- 仍然由同态律得
+  = Maybe ((.) u' v') <*> Maybe w'  -- 由同态律得
+  = Maybe ((.) u') <*> Maybe v' <*> w  -- 仍然由同态律得
   = Maybe (.) <*> Maybe u' <*> v <*> w
   = Maybe (.) <*> u <*> v <*> w
   = pure (.) <*> u <*> v <*> w
@@ -238,7 +238,7 @@ pure = ZipList . repeat
     pure id <*> ZipList xs
   = ZipList (repeat id) <*> ZipList xs
   = ZipList (zipWith ($) (repeat id) xs)
-  = ZipList xs -- 由Haskell常识得
+  = ZipList xs  -- 由Haskell常识得
 ```
 
 同态律：
@@ -247,9 +247,9 @@ pure = ZipList . repeat
     pure f <*> pure x
   = ZipList (repeat f) <*> ZipList (repeat x)
   = ZipList (zipWith ($) (repeat f) (repeat x))
-  = ZipList (repeat (f $ x)) -- 由Haskell常识得
+  = ZipList (repeat (f $ x))  -- 由Haskell常识得
   = ZipList (repeat (f x))
-  = ZipList . repeat (f x) -- 由(.)的定义得
+  = ZipList . repeat (f x)  -- 由(.)的定义得
   = pure (f x)
 ```
 
@@ -577,13 +577,13 @@ instance Monad ((->) e) where
 ```haskell
     f >>= (\t -> g t >>= h)
   = f >>= (\t -> (\e -> h (g t e) e))
-  = f >>= (\t e -> h (g t e) e) -- uncurry
+  = f >>= (\t e -> h (g t e) e)  -- uncurry
   = \e' -> (\t e -> h (g t e) e) (f e') e'
   = \e' -> (\e -> h (g (f e') e) e) e'
   = \e' -> h (g (f e') e') e'
   = \e' -> h ((\k -> g (f k) k) e') e'
-  = (\k -> g (f k) k) >>= h -- \e' -> h (K e') e' = K >>= h
-  = (f >>= g) >>= h         -- 同理
+  = (\k -> g (f k) k) >>= h  -- \e' -> h (K e') e' = K >>= h
+  = (f >>= g) >>= h          -- 同理
 ```
 
 ### 实现以下数据类型的函子与单子
@@ -725,7 +725,7 @@ Node t >>= f = Node $ fmap (>>= f) t
 	Node t >>= return
   = Node $ fmap (>>= Var) t
   = Node $ fmap (\_ -> Var a >>= Var) t
-  = Node $ t -- 请通过类型运算让自己相信这一步是正确的
+  = Node $ t  -- 请通过类型运算让自己相信这一步是正确的
   = Node t
 
 -- 若 t = f (Node u)，则
@@ -734,7 +734,7 @@ Node t >>= f = Node $ fmap (>>= f) t
 
 -- 递归至第一步，如果t有穷（其递归结构终止于Var a）,则
     Node t >>= return
-  = Node $ t -- 请通过类型运算让自己相信这一步是正确的
+  = Node $ t  -- 请通过类型运算让自己相信这一步是正确的
   = Node t
 ```
 
@@ -769,3 +769,95 @@ fmap :: Functor m => (x -> m b) -> m x -> m (m b)
 ```haskell
 m >>= f = join (fmap f m)
 ```
+
+### 利用`(>>=)`和`return`实现`join`和`fmap`
+
+类型就不再赘述。已知量如下：
+
+```haskell
+join x :: m a
+  where x :: m (m a)
+  
+fmap f m :: m b
+  where f :: a -> b
+        m :: m a
+```
+
+`join`很简单：
+
+```haskell
+join x = x >>= \x' -> x'
+-- i.e.
+join x = x >>= id
+```
+
+观察到`f`与`(>>=)`中的第二个参数的类型相似，其可以用`return . f`来表示，那么`fmap`也很简单：
+
+```haskell
+fmap f m = m >>= (return . f)
+```
+
+### 证明关于`(>=>)`的规则与一般的单子规则是等价的
+
+其中`(>=>)`的定义如下：
+
+```haskell
+g >=> h = \x -> g x >>= h
+```
+
+左恒等律：
+
+```haskell
+    return >=> g
+  = \x -> return x >>= g
+  = \x -> g x  -- 通常的左恒等律
+  = g
+```
+
+即证明了，当且仅当通常的左恒等律成立时，关于`(>=>)`的左恒等律成立。也就说明这条左恒等律与通常的左恒等律等价。
+
+右恒等律：
+
+```haskell
+    g >=> return
+  = \x -> g x >>= return
+  = \x -> g x  -- 通常的右恒等律
+  = g
+```
+
+结合律：
+
+```haskell
+    (g >=> h) >=> k
+  = (\x -> g x >>= h) >=> k
+  = \y -> (\x -> g x >>= h) y >>= k
+  = \y -> g y >>= h >>= k
+  = \y -> g y >>= (\x -> h x >>= k)  -- (>>=)的结合律
+  = \y -> g y >>= (h >=> k)  -- (>=>)的定义
+  = g >=> (h >=> k)  -- (>=>)的定义
+```
+
+### 给定`distrib :: N (M a) -> M (N a)`，实现以下函数
+
+```haskell
+join :: M (N (M (N a))) -> M (N a)
+```
+
+如果你熟悉do记法，这个就比较简单了：
+
+```haskell
+join mnmna = do nmna <- mnmna
+                nna <- distrib nmna  -- 得到 M (N (N a))
+				na <- join nna
+				return na
+```
+
+Foldable 折子(?)
+----
+
+### `foldMap . foldMap`是什么类型？有什么用？
+
+在GHCi里使用`:t <expr>`可以查看`<expr>`的类型。
+
+`foldMap . foldMap`可以折叠两层嵌套的不同折子到一个幺半群（Monoid）上。
+
