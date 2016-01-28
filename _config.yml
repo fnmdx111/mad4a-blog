@@ -1,4 +1,4 @@
-markdown: rdiscount
+markdown: redcarpet
 permalink: /:year/:month/:day/:title/
 url: http://qwert42.github.io
 author: qwert42
