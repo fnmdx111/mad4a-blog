@@ -5,10 +5,11 @@
 	src: url('FiraCode-Regular.eot');
 	src: url('FiraCode-Regular.eot?#iefix') format('embedded-opentype'),
 		url('FiraCode-Regular.woff') format('woff'),
+		url('FiraCode-Regular.ttf') format('truetype'),
 		url('FiraCode-Regular.otf') format('opentype'),
 		url('FiraCode-Regular.svg#FiraCode-Regular') format('svg');
 	font-weight: 400;
 	font-style: normal;
 	font-stretch: normal;
-	unicode-range: U+000D-1F310;
+	unicode-range: U+0020-1F310;
 }

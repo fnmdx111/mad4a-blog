@@ -9,11 +9,10 @@
 * |\.|._)._)
 * --------------------------------- */
 
-@import url(https://fonts.googleapis.com/css?family=Fira+Mono&subset=latin,latin-ext);
+@import url(FiraCode-Regular.css);
 @import url(http://fonts.googleapis.com/css?family=Galdeano);
 @import url(http://fonts.googleapis.com/css?family=Electrolize);
 @import url(http://fonts.googleapis.com/css?family=Cuprum);
-@import url(FiraCode-Regular.css);
 body{font-size:14px;word-spacing:0px;
      margin-left:auto;
      font-variant-ligatures: contextual;
@@ -61,7 +60,7 @@ h2{font-family:"Cuprum","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-siz
 h3{font-family:"Cuprum","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:1.2em;color:#222;}
 h3 code {font-size: 16px; color: #2176c7}
 h4{font-family:"Cuprum","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:1em;color:#333;}
-pre,code{font-family:FiraCode-Regular, "Fira Mono", "Source Code Pro", "DejaVu Sans Mono","Bitstream Vera Sans Mono",Consolas,Menlo,"Andale Mono","Courier New",Monaco,monospace;font-size:12px;}
+pre,code{font-family:"Fira Code", "FiraCode-Regular", "Fira Mono", "Source Code Pro", "DejaVu Sans Mono","Bitstream Vera Sans Mono",Consolas,Menlo,"Andale Mono","Courier New",Monaco,monospace;font-size:12px;}
 p code{background-color:#f7f7f7; padding: 1px; margin: 1px; border-radius: 2px; border: 0px solid #ddd; color: #2176c7}
 embed,object,iframe{display:block;margin:4px auto;}
 .gist{font-size: 12px;line-height:1.6;}
