@@ -14,10 +14,11 @@
 @import url(http://fonts.googleapis.com/css?family=Electrolize);
 @import url(http://fonts.googleapis.com/css?family=Cuprum);
 body{font-size:14px;word-spacing:0px;
-     margin-left:auto;
      font-variant-ligatures: contextual;
-margin-right:auto;
-	font-family:"Galdeano","Hiragino Sans GB","Microsoft YaHei",Trebuchet,"Trebuchet MS",Tahoma,"Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;color:#000000;background-color:#ffffff;}
+     text-rendering: optimizeLegibility;
+     margin-left:auto;
+     margin-right:auto;
+     font-family:"Galdeano","Hiragino Sans GB","Microsoft YaHei",Trebuchet,"Trebuchet MS",Tahoma,"Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;color:#000000;background-color:#ffffff;}
 *{padding:0;margin: 0;border:none;outline:none;}
 a{color:#dd0000;text-decoration:none;}
 a:hover{color:#333333;text-decoration:underline;}
@@ -60,7 +61,7 @@ h2{font-family:"Cuprum","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-siz
 h3{font-family:"Cuprum","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:1.2em;color:#222;}
 h3 code {font-size: 16px; color: #2176c7}
 h4{font-family:"Cuprum","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:1em;color:#333;}
-pre,code{font-family:"Fira Code", "FiraCode-Regular", "Fira Mono", "Source Code Pro", "DejaVu Sans Mono","Bitstream Vera Sans Mono",Consolas,Menlo,"Andale Mono","Courier New",Monaco,monospace;font-size:12px;}
+pre,code{font-family:/*"Fira Code",*/ "FiraCode-Regular", "Fira Mono", "Source Code Pro", "DejaVu Sans Mono","Bitstream Vera Sans Mono",Consolas,Menlo,"Andale Mono","Courier New",Monaco,monospace;font-size:12px;}
 p code{background-color:#f7f7f7; padding: 1px; margin: 1px; border-radius: 2px; border: 0px solid #ddd; color: #2176c7}
 embed,object,iframe{display:block;margin:4px auto;}
 .gist{font-size: 12px;line-height:1.6;}
