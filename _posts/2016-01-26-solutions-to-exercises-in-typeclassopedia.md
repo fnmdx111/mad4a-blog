@@ -980,3 +980,85 @@ Traversable 遍子(?)
 
 可以将列表里的树按照坐标zip起来。
 
+以下是另一种解法：
+
+```haskell
+data MT a = Nd a (MT a) (MT a) | MN
+  deriving Show
+
+instance Monoid a => Monoid (MT a) where
+  mempty = MN
+  MN `mappend` a = a
+  a `mappend` MN = a
+  Nd xs l r `mappend` Nd ys p q = Nd (xs `mappend` ys)
+                                  (l `mappend` p)
+                                  (r `mappend` q)
+```
+
+将一个包含具体元素的树lift成元素为在该节点可能出现的值：
+
+```haskell
+conformToMT :: [MT a] -> [MT [a]]
+conformToMT = map lift_to_list
+  where lift_to_list :: MT a -> MT [a]
+        lift_to_list (Nd a l r) = Nd [a] (lift_to_list l) (lift_to_list r)
+        lift_to_list MN = MN
+```
+
+然后就可以利用`foldMap`将两个`MT [a]`给`(<+>)`（`mappend`）起来：
+
+```haskell
+treesToLists :: [MT a] -> MT [a]
+treesToLists = foldMap id . conformToMT
+```
+
+### 只使用`Traversable`方法实现`fmap`与`foldMap`
+
+首先观察相关方法的类型：
+
+```haskell
+fmap :: Functor f => (a -> b) -> f a -> f b
+traverse :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
+```
+
+可以观察到他们俩类型的结构是差不多的，都是两个参数：一个一元函数，一个带上下文的值，返回一个带上下文的结果。如果取`traverse`中的`f`为恒等应用函子（`Identity a`），那么`traverse`的类型会变为：
+
+```haskell
+traverse :: Traversable t => (a -> Id b) -> t a -> Id (t b)
+```
+
+也就是如果将`fmap`中的那个函数参数与`Id`这个构造器函数复合，就可以利用`traverse`了。只要最后用`getId`将结果从恒等应用函子中取出就行了。
+
+```haskell
+fmap f = getId . traverse (Id . f)
+```
+
+接下来是`foldMap`：
+
+```haskell
+foldMap :: (Monoid o, Foldable f) => (a -> o) -> f a -> o
+traverse :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
+```
+
+同样，它们的结构很相似。但是`foldMap`比`traverse`多出一个幺半群的限制，即按照刚刚实现`fmap`的思路，上面`traverse`中`b`的类型应该有一个幺半群限制。同时，因为我们知道`foldMap`是将折子中所有的元素都`(<+>)`起来，而`traverse`是将遍子中所有的元素用`(<*>)`合起来，所以我们要构建的一个应用函子`f a`应该具有这样的性质：即当`a`为幺半群时，`F a1 <*> F a2 = F (a1 <+> a2)`。我们当然可以自己构建一个这样的应用函子，也可以使用`Control.Applicative`模块里已经提供给我们的
+
+```haskell
+newtype Const a b = Const { getConst :: a }
+```
+
+`Const a b`满足，如果`a`是一个幺半群，那么`Const a b`是一个幺半群，同时满足当`a1`与`a2`是幺半群时，`Const a1 <*> Const a2 = Const (a1 <+> a2)`。如果将`f`换为`Const a b`应用函子，那么`traverse`的类型会变成：
+
+```haskell
+traverse :: Traversable t => (a -> Const b c) -> t a -> Const (t b) c
+```
+
+当`Const a b`中的`a`是一个幺半群时，`Const a b`是一个幺半群：
+
+```haskell
+traverse :: (Traversable t, Monoid b) =>
+            (a -> Const b c) -> t a -> Const (t b) c
+foldMap f = getConst . traverse (Const . f)
+```
+
+反过来推算这个`foldMap`的类型：`f`必须是`Monoid b => a -> b`才能使得`Const . f`满足`Monoid b => Const b c`，这样`traverse`还剩下一个`Traversable :: t a`类型的参数，也就是`foldMap`还剩下一个这样的参数。返回值应该是`Const b (t c)`剥掉`Const`之后的`b`。（因为在`(<*>)`运算中，虽然是`b`参与了运算（并且类型不变），但在Haskell的类型系统中名义上进行运算的是`c`，而且因为`traverse`的原因`c`会变为`t c`。）
+
