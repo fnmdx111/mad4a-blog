@@ -1040,7 +1040,7 @@ foldMap :: (Monoid o, Foldable f) => (a -> o) -> f a -> o
 traverse :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
 ```
 
-同样，它们的结构很相似。但是`foldMap`比`traverse`多出一个幺半群的限制，即按照刚刚实现`fmap`的思路，上面`traverse`中`b`的类型应该有一个幺半群限制。同时，因为我们知道`foldMap`是将折子中所有的元素都`(<+>)`起来，而`traverse`是将遍子中所有的元素用`(<*>)`合起来，所以我们要构建的一个应用函子`f a`应该具有这样的性质：即当`a`为幺半群时，`F a1 <*> F a2 = F (a1 <+> a2)`。我们当然可以自己构建一个这样的应用函子，也可以使用`Control.Applicative`模块里已经提供给我们的
+同样，它们的结构很相似。但是`foldMap`比`traverse`多出一个幺半群的限制，即按照刚刚实现`fmap`的思路，上面`traverse`中`b`的类型应该有一个幺半群限制。同时，因为我们知道`foldMap`是将折子中所有的元素都`(<+>)`起来，而`traverse`是将遍子中所有的元素用`(<*>)`合起来，所以我们要构建的一个应用函子`f a`应该具有这样的性质：即当`a`为幺半群时，`F a1 <*> F a2 = F (a1 <+> a2)`。然而`traverse`要求其结果为`f (t a)`，与`(<*>)`的结果类型不同。但是这里我们可以构建这样一个类型`f a b`，当它与自己做`(<*>)`运算时，`a`之间做`(<+>)`运算获得另一个`a`，`b`之间做其它运算，获得`t b`。最简单的方法就是`b`留空。这里我们可以使用`Control.Applicative`模块里已经提供给我们的
 
 ```haskell
 newtype Const a b = Const { getConst :: a }
@@ -1049,16 +1049,14 @@ newtype Const a b = Const { getConst :: a }
 `Const a b`满足，如果`a`是一个幺半群，那么`Const a b`是一个幺半群，同时满足当`a1`与`a2`是幺半群时，`Const a1 <*> Const a2 = Const (a1 <+> a2)`。如果将`f`换为`Const a b`应用函子，那么`traverse`的类型会变成：
 
 ```haskell
-traverse :: Traversable t => (a -> Const b c) -> t a -> Const (t b) c
+traverse :: Traversable t => (a -> Const b c) -> t a -> Const b (t c)
 ```
 
 当`Const a b`中的`a`是一个幺半群时，`Const a b`是一个幺半群：
 
 ```haskell
 traverse :: (Traversable t, Monoid b) =>
-            (a -> Const b c) -> t a -> Const (t b) c
+            (a -> Const b c) -> t a -> Const b (t c)
 foldMap f = getConst . traverse (Const . f)
 ```
-
-反过来推算这个`foldMap`的类型：`f`必须是`Monoid b => a -> b`才能使得`Const . f`满足`Monoid b => Const b c`，这样`traverse`还剩下一个`Traversable :: t a`类型的参数，也就是`foldMap`还剩下一个这样的参数。返回值应该是`Const b (t c)`剥掉`Const`之后的`b`。（因为在`(<*>)`运算中，虽然是`b`参与了运算（并且类型不变），但在Haskell的类型系统中名义上进行运算的是`c`，而且因为`traverse`的原因`c`会变为`t c`。）
 
