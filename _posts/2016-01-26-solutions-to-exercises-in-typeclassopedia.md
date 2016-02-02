@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Solutions to exercises in Typeclassopedia"
+title: "类型宝典（Typeclassopedia）题解"
 category: summary
 tags: [Haskell, Typeclassopedia]
 ---
