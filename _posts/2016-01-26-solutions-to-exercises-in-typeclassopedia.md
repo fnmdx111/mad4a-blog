@@ -1060,3 +1060,150 @@ traverse :: (Traversable t, Monoid b) =>
 foldMap f = getConst . traverse (Const . f)
 ```
 
+Arrow 箭子(?)
+----
+
+### 实现`Kleisli m a b`的`ArrowApply`实例，其中`Kleisli m a b`定义为
+
+```haskell
+data Kleisli m a b = Kleisli { runKleisli :: a -> m b }
+```
+
+可以看出`Kleisli`这个构造器要求一个`a -> m b`类型的参数。
+
+现在我们首先看`app`要求的类型：
+
+```haskell
+app :: arr (arr b c, b) c
+-- or
+app :: (b `arr` c, b) `arr` c
+-- or
+app :: (b ~> c, b) ~> c
+```
+
+也就是说我们的`Kleisli m a b`的`ArrowApply`实例里`app`的类型应该是：
+
+```haskell
+app :: Monad m => Kleisli m (Kleisli m b c, b) c
+app = Kleisli $ \ ...
+```
+
+这个`Kleisli m (Kleisli m b c, b) c`的第二个类型参数是一个二元元组，所以：
+
+```haskell
+app = Kleisli $ \(Kleisli f, b) -> ...
+```
+
+现在既然给了我们`f :: Monad m => b -> m c`和`b :: b`，很难不让人想把`b`应用到`f`上，于是有了：
+
+```haskell
+app = Kleisli $ \(Kleisli f, b) -> f b
+```
+
+### 实现`ArrowMonad m a = ArrowMonad (m () a)`的`Monad`实例
+
+注：`ArrowMonad`的构造器是一个一元函数，接受一个`ArrowApply`类的值。
+
+也就是让我们用箭子相关的函数实现`fmap`，`pure`，`(<*>)`和`(>>=)`。以下就不一一证明相关实例是否符合对应的法则了。
+
+```haskell
+instance ArrowApply m => Functor (ArrowMonad m) where
+  -- fmap :: (a -> b) -> ArrowMonad m a -> ArrowMonad m b
+  fmap f (ArrowMonad ma) = ArrowMonad $ ...
+```
+
+要实现这个，也就要想办法把`a`弄出来，才好应用到`f`上。观察`Control.Arrow`中的各种组合子，发现`(>>>)`具有我们感兴趣的类型：
+
+```haskell
+(>>>) :: Category cat => cat a b -> cat b c -> cat a c
+-- i.e.
+(>>>) :: ArrowMonad m a -> ArrowMonad a b -> ArrowMonad m b
+-- i.e. (>>>) :: ArrowMonad (m () a) -> ArrowMonad (a () b) -> ArrowMonad (m () b)
+```
+
+刚好对应上我们的已知量，所以我们可以将`ma`右连接（`(>>>)`）至提升到箭子中的`f`来获得想要的结果：
+
+```haskell
+fmap f (ArrowMonad ma) = ArrowMonad $ ma >>> arr f
+```
+
+接下来是应用函子：
+
+```haskell
+instance ArrowApply m => Applicative (ArrowMonad m) where
+  -- pure :: a -> ArrowMonad m a
+  pure a = ArrowMonad $ ...
+  -- (<*>) :: ArrowMonad m (a -> b) -> ArrowMonad m a -> ArrowMonad m b
+  ArrowMonad mf <*> ArrowMonad ma = ArrowMonad $ ...
+```
+
+`pure`很简单，
+
+```haskell
+pure a = ArrowMonad $ arr $ \_ -> a
+-- i.e. pure = ArrowMonad . arr . const
+```
+
+根据刚才的思路，我们可以使用`(>>>)`与适当构造的箭子一起获得`ArrowMonad`中包装起来的值。但是在`(<*>)`中，包装起来的值有两个。自然的想法是两次利用`(>>>)`（也就是要两次构造合适的箭子）：
+
+```haskell
+ArrowMonad mf <*> ArrowMonad ma =
+  ArrowMonad $ mf >>> arr (\f ->
+               ma >>> arr (\a ->
+			   f a))
+```
+
+很像`Monad`的`(>>=)`应用，但是这样有类型错误：`ma >>> arr (\a -> f a)`很明显不应该是`\f -> ...`的返回值。
+
+
+观察箭子的相关方法，发现`(&&&)`可以将两个箭子合并成一个，这个箭子接受一个元组为两个箭子的输入。那么我们就可以这样构造一个函数：
+
+```haskell
+ArrowMonad mf <*> ArrowMonad ma = ArrowMonad $ mf &&& ma >>> arr (uncurry id)
+-- reminder: uncurry id === \(f, x) -> f x
+```
+
+最后是单子实例。还是根据之前的思路，利用`(>>>)`来我们构造将`mx`内的值应用至`f`的一个箭子，在构造的箭子里，我们会获得一个新的值`my`（因为`f`返回一个`ArrowMonad m b`）：
+
+```haskell
+instance ArrowApply m => Monad (ArrowMonad m) where
+  ArrowMonad mx >>= f = ArrowMonad $
+                        mx >>>
+						arr (\x -> let ArrowMonad my = f x
+								   in ...
+```
+
+这时我们来考察一下我们已知量的类型：
+
+```haskell
+(>>=) :: ArrowApply m => ArrowMonad m a -> (a -> ArrowMonad m b) -> ArrowMonad m b
+mx :: m () a
+f :: (a -> ArrowMonad m b)
+my :: m () b
+
+(>>>) :: m () a -> m a b -> m () b
+
+-- 以及类型约束中的ArrowApply
+app :: m (m a b, a) b
+```
+
+我需要后面未知的部分能返回`ArrowMonad m b`，也就是那个匿名函数需要返回`b`，这显然是做不到的，因为没有办法从`my :: m () b`得到`b`。那么就只能好好利用`app`了，可以观察到`app`最外层的`m`的中间那一坨刚好对应之前的定义`ArrowMonad (m () a)`，那么只要设法利用`app`，就可以使得`ArrowMonad $`后面那一坨变成`m _ b`，从而获得我们需要的返回值类型。
+
+具体来说，`app`现在的类型是：
+
+```haskell
+app :: m (m () b, a) b
+```
+
+中间元组的第一部分刚好就是`my`！如果令`a`为`()`使得它满足`ArrowMonad (m () t)`的定义（即该`ArrowApply`的输入必须为一个`()`），那么省略号处的代码我们也清楚了：
+
+```haskell
+ArrowMonad mx >>= f = ArrowMonad $
+                      mx >>>
+					  arr (\x -> let ArrowMonad my = f x
+					             in (my, ())) >>>
+	                  app
+```
+
+Fin.
+
